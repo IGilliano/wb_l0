@@ -45,7 +45,7 @@ func (r *Repository) GetOrderFromCache(id int) (wb_l0.Order, error) {
 }
 
 func (r *Repository) GetOrders() ([]wb_l0.Data, error) {
-	orders := make([]wb_l0.Data, 10)
+	var orders []wb_l0.Data
 	query := "SELECT * FROM orders"
 	rows, err := r.db.Query(query)
 	if err != nil {
@@ -56,9 +56,14 @@ func (r *Repository) GetOrders() ([]wb_l0.Data, error) {
 		var id int
 		var order wb_l0.Data
 		data := make([]byte, 10)
-		rows.Scan(&id, &data)
+		if err = rows.Scan(&id, &data); err != nil {
+			return nil, err
+		}
 		order.Id = id
-		json.Unmarshal(data, &order.Order)
+		err = json.Unmarshal(data, &order.Order)
+		if err != nil {
+			return nil, err
+		}
 		orders = append(orders, order)
 	}
 	return orders, nil
@@ -74,7 +79,6 @@ func (r *Repository) PushOrder(order wb_l0.Order) (int, error) {
 		return 0, err
 	}
 
-	fmt.Printf("HELLO THERE")
 	r.cache.Set(wb_l0.Data{Id: id, Order: order})
 
 	return id, nil

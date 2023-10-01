@@ -71,7 +71,7 @@ func main() {
 	defer sc.Close()
 
 	//for i := 1; ; i++ {
-	err = sc.Publish("orders", []byte(JSONMsg))
+	err = sc.Publish("orders", []byte("TEST"))
 	if err != nil {
 		log.Printf("Failed to publish message:%s", err.Error())
 	}

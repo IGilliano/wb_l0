@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 	"wb_l0"
-	stan "wb_l0/cmd/stan/stan_sub"
 	"wb_l0/pkg/handler"
 	"wb_l0/pkg/repository"
 	"wb_l0/pkg/service"
+	stan "wb_l0/pkg/stan_sub"
 )
 
 func main() {
@@ -28,7 +28,12 @@ func main() {
 	hand := handler.NewHandler(svc)
 	srv := new(wb_l0.Server)
 
-	go stan.SubscribeToNS(repo)
+	stanSub := stan.NewStanSub()
+	stanSub.Run(repo)
+
+	defer stanSub.Unsubscribe()
+	defer stanSub.Close()
+	//go stan.SubscribeToNS(repo)
 
 	if err = srv.Run("8000", hand.InitRoutes()); err != nil {
 		log.Fatalf("Error occured while running http server: %s", err)

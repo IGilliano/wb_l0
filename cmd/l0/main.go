@@ -33,7 +33,6 @@ func main() {
 
 	defer stanSub.Unsubscribe()
 	defer stanSub.Close()
-	//go stan.SubscribeToNS(repo)
 
 	if err = srv.Run("8000", hand.InitRoutes()); err != nil {
 		log.Fatalf("Error occured while running http server: %s", err)

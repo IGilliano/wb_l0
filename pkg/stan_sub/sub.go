@@ -11,7 +11,7 @@ import (
 
 const (
 	ClusterID = "test-cluster"
-	CliendID  = "test"
+	ClientID  = "test"
 )
 
 type StanSub struct {
@@ -22,7 +22,7 @@ type StanSub struct {
 }
 
 func NewStanSub() *StanSub {
-	return &StanSub{clusterID: ClusterID, clientID: CliendID}
+	return &StanSub{clusterID: ClusterID, clientID: ClientID}
 }
 
 func (s *StanSub) Run(repo *repository.Repository) {
@@ -51,13 +51,15 @@ func (s *StanSub) Close() error {
 }
 
 func (s *StanSub) Subscribe(repo *repository.Repository) error {
-	startOpt := stan.StartWithLastReceived()
 	handler := func(msg *stan.Msg) {
 		log.Printf("Got new message\n")
-		parseMsg(repo, msg.Data)
+		if err := msg.Ack(); err != nil {
+			log.Printf("Cant acknowledge a messagee:%v", err)
+		}
+		s.handleMsg(repo, msg.Data)
 	}
 
-	sub, err := s.connection.Subscribe("orders", handler, startOpt, stan.SetManualAckMode())
+	sub, err := s.connection.Subscribe("orders", handler, stan.StartWithLastReceived(), stan.SetManualAckMode())
 	if err != nil {
 		return err
 	}
@@ -77,10 +79,12 @@ func (s *StanSub) Unsubscribe() error {
 	return nil
 }
 
-func parseMsg(repo *repository.Repository, msg []byte) {
+func (s *StanSub) handleMsg(repo *repository.Repository, msg []byte) {
 	var order wb_l0.Order
 	err := json.Unmarshal(msg, &order)
 	if err != nil {
+		fmt.Printf("Message is incorrect: %s", string(msg))
+	} else if order.OrderUid == "" {
 		fmt.Printf("Message is incorrect: %s", string(msg))
 	} else {
 		log.Println("Message is correct\n")

@@ -5,16 +5,20 @@ Service allows:
 - Save received order in database and cache
 - Receive order by ID from cache
 
-####Usage:
-
+#### USAGE
+```
 # Launch STAN server:
 go run ./cmd/stan_pub
-
+```
+```
 # Launch service: 
 go run ./cmd/l0
-
+```
+```
 # launch STAN server:
 go run ./cmd/stan_pub
-
-# Interface:
+```
+```
+# Interface (Swagger UI):
 http://localhost:8080/docs/index.html#
+```

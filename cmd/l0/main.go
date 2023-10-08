@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"wb_l0"
 	_ "wb_l0/docs"
 	"wb_l0/pkg/handler"
 	"wb_l0/pkg/repository"
@@ -31,7 +32,7 @@ func main() {
 	repo.RestoreCache()
 	svc := service.NewService(repo)
 	hand := handler.NewHandler(svc)
-	//srv := new(wb_l0.Server)
+	srv := new(wb_l0.Server)
 
 	stanSub := stan.NewStanSub()
 	stanSub.Run(repo)
@@ -39,10 +40,7 @@ func main() {
 	defer stanSub.Unsubscribe()
 	defer stanSub.Close()
 
-	router := hand.InitRoutes()
-	router.Run(":8080")
-
-	//if err = srv.Run("8000", hand.InitRoutes()); err != nil {
-	//	log.Fatalf("Error occured while running http server: %s", err)
-	//}
+	if err = srv.Run("8080", hand.InitRoutes()); err != nil {
+		log.Fatalf("Error occured while running http server: %s", err)
+	}
 }

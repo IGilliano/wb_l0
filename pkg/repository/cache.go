@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"fmt"
+	"log"
 	"sync"
 	"wb_l0"
 )
@@ -15,6 +15,6 @@ func (c *Cache) Set(data wb_l0.Data) {
 	c.Lock()
 
 	defer c.Unlock()
-	fmt.Println(data.Id, data.Order)
 	c.data[data.Id] = data.Order
+	log.Printf("Message deployed to cache, id: %d", data.Id)
 }

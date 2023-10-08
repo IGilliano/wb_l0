@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -33,13 +32,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 // @Param    id  path      int  true  "Search order by ID"
 // @Produce  json
 // @Success 200 {object} wb_l0.Order
-// @Failure 400,404 {object} error
+// @Failure 404 {object} error
 // @Router /{id} [get]
 func (h *Handler) getOrder(c *gin.Context) {
 	orderId, err := strconv.Atoi(c.Param("id"))
-	fmt.Println(orderId)
 	if err != nil {
-		newErrorResponce(c, http.StatusBadRequest, "Invalid ID")
+		newErrorResponce(c, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -47,7 +45,6 @@ func (h *Handler) getOrder(c *gin.Context) {
 	if err != nil {
 		newErrorResponce(c, http.StatusNotFound, err.Error())
 	} else {
-
 		c.JSON(http.StatusOK, order)
 	}
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/nats-io/stan.go"
 	"io"
 	"log"
@@ -29,8 +28,7 @@ func main() {
 	defer sc.Close()
 
 	for i := 1; i < testCases+1; i++ {
-		path := "stan_pub/testcase" + strconv.Itoa(i) + ".json"
-		fmt.Println(path)
+		path := "cmd/stan_pub/testcase" + strconv.Itoa(i) + ".json"
 		testcase, err := os.Open(path)
 		if err != nil {
 			log.Fatalf(err.Error())
@@ -44,6 +42,7 @@ func main() {
 		if err != nil {
 			log.Printf("Failed to publish message:%s", err.Error())
 		}
+		log.Printf("Message %d send", i)
 		time.Sleep(1 * time.Second)
 	}
 }

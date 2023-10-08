@@ -54,7 +54,7 @@ func (s *StanSub) Subscribe(repo *repository.Repository) error {
 	handler := func(msg *stan.Msg) {
 		log.Printf("Got new message\n")
 		if err := msg.Ack(); err != nil {
-			log.Printf("Cant acknowledge a messagee:%v", err)
+			log.Printf("Cant acknowledge a message:%v", err)
 		}
 		s.handleMsg(repo, msg.Data)
 	}
@@ -83,11 +83,10 @@ func (s *StanSub) handleMsg(repo *repository.Repository, msg []byte) {
 	var order wb_l0.Order
 	err := json.Unmarshal(msg, &order)
 	if err != nil {
-		fmt.Printf("Message is incorrect: %s", string(msg))
+		fmt.Printf("Message is incorrect: %v\n", err.Error())
 	} else if order.OrderUid == "" {
-		fmt.Printf("Message is incorrect: %s", string(msg))
+		fmt.Printf("Message is incorrect: orderuid is empty\n")
 	} else {
-		log.Println("Message is correct\n")
 		id, err := repo.PushOrder(order)
 		if err != nil {
 			log.Printf("Couldnt push order to db: %s\n", err.Error())

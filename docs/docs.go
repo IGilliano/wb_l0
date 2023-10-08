@@ -40,10 +40,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/wb_l0.Order"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {}
-                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {}
